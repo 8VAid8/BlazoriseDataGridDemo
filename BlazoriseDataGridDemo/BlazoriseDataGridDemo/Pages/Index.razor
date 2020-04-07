@@ -1,0 +1,46 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+<DataGrid TItem="WeatherForecast"
+          Data="@forecasts"
+          EditMode="@editMode"
+          Editable="@editable"
+          Sortable="@sortable"
+          Filterable="@filterable"
+          ShowPager="@showPager"
+          PageSize="2">
+    <DataGridCommandColumn TItem="WeatherForecast" />
+    <DataGridColumn TItem="WeatherForecast" Field="TemperatureC" Caption="TemperatureC" Sortable="false" />
+    <DataGridColumn TItem="WeatherForecast" Field="Summary" Caption="Summary" Editable="true" />
+    <DataGridColumn TItem="WeatherForecast" Field="TemperatureF" Caption="TemperatureF" Editable="true" />
+</DataGrid>
+
+@code {
+    DataGridEditMode editMode = DataGridEditMode.Form;
+    bool editable = true;
+    bool sortable = false;
+    bool filterable = false;
+    bool showPager = true;
+
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    }
+
+    public class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
